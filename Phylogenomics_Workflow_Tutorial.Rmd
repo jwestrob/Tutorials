@@ -201,16 +201,20 @@ Next, navigate to GENOMES/. Perform the following commands:
 ```
 
 Now, you need to add these contigs DBs to external-genomes.txt. The way I do this is as follows:
-
+```{r, engine='bash', list_gene_names}
 		$ ls -1a *.db
-		## Copy the resulting names (one on each line).
-		## Open external-genomes.txt in the text editor of your choice.
-		## Paste them in so that they are in the following format:
+```
+Copy the resulting names (one on each line).
+Open external-genomes.txt in the text editor of your choice.
+Paste them in so that they are in the following format:
 
-		Ex. Grouse_Metabat_001.db
+Ex.  with Grouse_Metabat_001.db:
 
-		name	contigs_db_path
-	Grouse_Metabat_001	 Grouse_Metabat_001.db
+*external-genomes.txt*
+```{r, engine='text', external-genomes.txt}
+name	contigs_db_path
+Grouse_Metabat_001	 Grouse_Metabat_001.db
+```
 
 	Make sure this is tab-delimited!
 
