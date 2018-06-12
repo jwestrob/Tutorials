@@ -198,12 +198,19 @@ Next, navigate to GENOMES/. Perform the following commands:
 
 ```{r, engine='bash', list_gene_names}
 #Create a local link to my anvi'o script
+
 $ ln -s SCRIPTS/run_anvio_dbandstats.py
+
 #Profile all your genomes; create contigs DBs
+
 $ python run_anvio_dbandstats.py -a
+
 #Put all your fixed fasta files (anvi'o compatible headers) in Genomes/
+
 $ mv *-fixed.fa Genomes/
+
 #Get rid of files with old headers
+
 $ rm *.fa
 ```
 
