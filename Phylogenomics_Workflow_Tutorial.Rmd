@@ -140,7 +140,7 @@ If you want to see all of your available genes, A. you should read the Anvi'o ph
                                    --hmm-source Campbell_et_al \
                                    --list-available-gene-names                                
 ```
-You WILL have an ```{r, engine='bash', list_gene_names} external-genomes.txt ``` soon. Don't worry about that part.
+You WILL have an ```external-genomes.txt``` soon. Don't worry about that part.
 
 ---
 
@@ -160,9 +160,9 @@ Setup Procedure
 1. Make a folder somewhere to place your genomes in. Keep in mind this is NOT the database. If you're on Microbiome01, that's /mnt/data/Phylogenomics. (If you're not with Pitt and you want to use my database, just let me know and I can get it to you.) Place all your FASTA files in this folder. First, create subdirectories for each FASTA (name them according to the file being analyzed). Then, perform the following:
 
 ```{r, engine='bash', list_gene_names}
-  $ ln -s SCRIPTS/run_anvio_dbandstats.py
-	$ source activate anvio4
-	$ python run_anvio_dbandstats.py -a
+$ ln -s SCRIPTS/run_anvio_dbandstats.py
+$ source activate anvio4
+$ python run_anvio_dbandstats.py -a
 ```
 
 2.  Run_anvio_dbandstats.py creates a “fixed” FASTA with simplified header names that are compliant with Anvi’o’s format. I suggest removing the non “fixed” fasta files to avoid confusion. Now, move everything to its proper folder.
@@ -175,12 +175,13 @@ The most important file you’re working with is called ‘external-genomes.txt�
 
 
 ---
-Main Procedure
+## Main Procedure
 
 Navigate to the folder containing one of your FASTA sequences. You should have your genome (fixed by run_anvio_dbandstats.py) and a contigs db in this directory. Please run the following command (I used Grouse_Metabat_001 as an example here):
 ```{r, engine='bash', list_gene_names}
   $ anvi-get-sequences-for-hmm-hits -c Grouse_Metabat_001.db \
-      --hmm-sources Campbell_et_al --gene_names \ Ribosomal_L1,Ribosomal_L2,Ribosomal_L3,Ribosomal_L4,Ribosomal_L5,Ribosomal_L6 --return-best-hit -o MB_003_Campbellseqs.fa
+      --hmm-sources Campbell_et_al --gene_names \
+      Ribosomal_L1,Ribosomal_L2,Ribosomal_L3,Ribosomal_L4,Ribosomal_L5,Ribosomal_L6 --return-best-hit -o MB_003_Campbellseqs.fa
 ```
 Now, you can use any set of genes you want. If you have an Archaeal genome, for example, instead of “--hmm-sources Campbell_et_al”, use “Rinke_et_al”. If you’d like to see a list of available sources, use the “-l” flag. If you’d like to see a list of available gene names, use the “-L” flag.
 
@@ -194,15 +195,15 @@ When you’ve got that done, choose genomes from the BLAST search and download t
 Next, navigate to GENOMES/. Perform the following commands:
 
 ```{r, engine='bash', list_gene_names}
-	$ ln -s SCRIPTS/run_anvio_dbandstats.py
-	$ python run_anvio_dbandstats.py -a
-	$ mv *-fixed.fa Genomes/
-	$ rm *.fa
+$ ln -s SCRIPTS/run_anvio_dbandstats.py
+$ python run_anvio_dbandstats.py -a
+$ mv *-fixed.fa Genomes/
+$ rm *.fa
 ```
 
 Now, you need to add these contigs DBs to external-genomes.txt. The way I do this is as follows:
 ```{r, engine='bash', list_gene_names}
-		$ ls -1a *.db
+$ ls -1a *.db
 ```
 Copy the resulting names (one on each line).
 Open external-genomes.txt in the text editor of your choice.
@@ -216,8 +217,10 @@ name	contigs_db_path
 Grouse_Metabat_001	 Grouse_Metabat_001.db
 ```
 
-	Make sure this is tab-delimited!
+Make sure this is tab-delimited!
 
 Cool. Good job. Proud of you. We’re almost to the point where you can go grab a beer. Hold tight.
 
 Now, navigate back to the directory containing your genome to be analyzed. Make a subdirectory and put your fasta file and original contigs db there. Then, copy your GENOMES/external-genomes.txt here. Our example directory, Grouse_Metabat_001, looks like this:
+
+![directory_topography](images/dir_flowchart.png)
