@@ -263,7 +263,7 @@ $ cd First_Tree/
 Almost there. Now, I generally like to do my trees using the nucleotide sequences (I just figure it has better phylogenetic signal; I may well be wrong). Here’s how to do that:
 
 ```{r, engine='bash', linkle}
-		$ iqtree-omp -s concatenated-nuc-proteins.fa -bb 1000 -nt AUTO -m TEST
+$ iqtree-omp -s concatenated-nuc-proteins.fa -bb 1000 -nt AUTO -m TEST
 ```
 
 This will automatically decide how many threads to use, do ultrafast bootstrap with 1000 bootstrap trees, and test for the best model to use by Aikake and Bayesian information criteria. Now go get that beer and come back.
