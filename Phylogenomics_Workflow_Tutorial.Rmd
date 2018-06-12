@@ -181,7 +181,8 @@ Navigate to the folder containing one of your FASTA sequences. You should have y
 ```{r, engine='bash', list_gene_names}
   $ anvi-get-sequences-for-hmm-hits -c Grouse_Metabat_001.db \
       --hmm-sources Campbell_et_al --gene_names \
-      Ribosomal_L1,Ribosomal_L2,Ribosomal_L3,Ribosomal_L4,Ribosomal_L5,Ribosomal_L6 --return-best-hit -o MB_003_Campbellseqs.fa
+      Ribosomal_L1,Ribosomal_L2,Ribosomal_L3,Ribosomal_L4,Ribosomal_L5,Ribosomal_L6 \
+      --return-best-hit -o MB_001_Campbellseqs.fa
 ```
 Now, you can use any set of genes you want. If you have an Archaeal genome, for example, instead of “--hmm-sources Campbell_et_al”, use “Rinke_et_al”. If you’d like to see a list of available sources, use the “-l” flag. If you’d like to see a list of available gene names, use the “-L” flag.
 
@@ -189,15 +190,20 @@ If you’d like to see a complete list of flags and options, run “anvi-get-seq
 
 Your next order of business is to take that to [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi) and search for homology. Who knows, you might even find homology strong enough that you don’t have to do the rest of this procedure!
 
-When you’ve got that done, choose genomes from the BLAST search and download them from the NCBI database (https://www.ncbi.nlm.nih.gov/genome/browse/#!/overview/). I recommend downloading a bunch before going to the next step. Place them in GENOMES/. As you download them from NCBI, make sure to name them with the following convention:
+When you’ve got that done, choose genomes from the BLAST search and download them from the [NCBI database](https://www.ncbi.nlm.nih.gov/genome/browse/#!/overview/). I recommend downloading a bunch before going to the next step. Place them in GENOMES/. As you download them from NCBI, make sure to name them with the following convention:
+
 "[Genus name]\_[species name].fa"
 
 Next, navigate to GENOMES/. Perform the following commands:
 
 ```{r, engine='bash', list_gene_names}
+#Create a local link to my anvi'o script
 $ ln -s SCRIPTS/run_anvio_dbandstats.py
+#Profile all your genomes; create contigs DBs
 $ python run_anvio_dbandstats.py -a
+#Put all your fixed fasta files (anvi'o compatible headers) in Genomes/
 $ mv *-fixed.fa Genomes/
+#Get rid of files with old headers
 $ rm *.fa
 ```
 
@@ -219,8 +225,52 @@ Grouse_Metabat_001	 Grouse_Metabat_001.db
 
 Make sure this is tab-delimited!
 
+Now that you've added everything to your external-genomes.txt file, move all your contigs DBs to the 'contigs_dbs' folder:
+
+```{r, engine='bash', move_stuff}
+$ mv *.db contigs_dbs/
+```
+
 Cool. Good job. Proud of you. We’re almost to the point where you can go grab a beer. Hold tight.
 
 Now, navigate back to the directory containing your genome to be analyzed. Make a subdirectory and put your fasta file and original contigs db there. Then, copy your GENOMES/external-genomes.txt here. Our example directory, Grouse_Metabat_001, looks like this:
 
 ![directory_topography](images/dir_flowchart.png)
+
+You’re doing wonderful. We’re very close. Next, you’re going to want to get your scripts ready. Perform the following commands:
+
+```{r, engine='bash', linkle}
+$ ln -s SCRIPTS/get_concatenated_proteins.sh
+$ ln -s SCRIPTS/get_extended_proteins.sh
+```
+Now, link all your contigs dbs here. (This looks messy, but it’s not much of an inconvenience, I promise.)
+
+```{r, engine='bash', linkle}
+$ ln -s GENOMES/contigs_dbs/*.db .
+```
+
+Now, try running get_concatenated_proteins.sh. This will result in the creation of two files: concatenated-nuc-proteins.fa (Nucleotide sequences of LSU genes L1-L6) and concatenated-proteins.fa (Amino acid sequences of the same). Depending on how many genomes you had in external-genomes.txt, this might take a while. If you’re running get_extended_proteins.sh, be prepared to wait.
+
+If something is wrong here, check your external-genomes.txt. If you forgot to remove a “db” from one of the fields on the left, or if you have a duplicate name somewhere (which can happen with all the copy-pasting you’ll be doing). If your files were generated, great! Let’s move on.
+
+Make a directory to run your phylogenetic analysis in. I usually call them First_Tree, Second_Tree, etc. or some variant thereof. Perform the following command:
+
+```{r, engine='bash', linkle}
+$ mv concatenated* First_Tree/
+$ cd First_Tree/
+```  
+
+Almost there. Now, I generally like to do my trees using the nucleotide sequences (I just figure it has better phylogenetic signal; I may well be wrong). Here’s how to do that:
+
+```{r, engine='bash', linkle}
+		$ iqtree-omp -s concatenated-nuc-proteins.fa -bb 1000 -nt AUTO -m TEST
+```
+
+This will automatically decide how many threads to use, do ultrafast bootstrap with 1000 bootstrap trees, and test for the best model to use by Aikake and Bayesian information criteria. Now go get that beer and come back.
+
+Great! Now, to visualize this tree, go to [iTOL](http://itol.embl.de). Create an account (you’ll be glad you did) and go to “My Trees” on the top navigation bar. Select “upload tree file” and go to the directory where you just ran iq-tree. Upload the treefile- in our case, “concatenated-nuc-proteins.fa.treefile”.
+
+Now, if you see that your genome has a closely related friend in the phylogeny, congratulations! You’re done! Otherwise, look at the most closely related sequences and try to see if you can find any clues as to what your mystery genome might be. Then, go download more genomes from the taxon/taxa of your choice from NCBI, and repeat this whole process again! (I’ve done up to 10 trees in a single directory trying to find out what some stupid bacterium is. I don’t think it has any relatives in the database, unfortunately.)
+
+
+You now know how to do the whole thing! Congrats!
