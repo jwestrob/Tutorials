@@ -71,3 +71,51 @@ conda install -c bioconda iqtree
 ```
 
 Ta-dah!
+
+
+---
+
+## Basic overview and outline
+
+The phylogenomics workflow I've "developed" (I put together other people's software; this is just how to do it) is fairly straightforward, though it does involve a couple of steps.
+The main purpose behind it was to create a database to use to generate taxonomic placements for unknown MAGs from a sample of Sage Grouse secum. We got several MAGs out of my assembly pipeline (https://github.com/jwestrob/Metaxas; if you're trying to use this please let me know so I can help) but had no way of doing taxonomic ID for any of them, save for one _Megamonas_ MAG.
+
+Essentially, Anvi'o has several suites of HMMs for bacterial and archaeal single-copy genes, as well as ribosomal RNA genes. The basic gist of what I do here is covered in great detail here as well: http://merenlab.org/2017/06/07/phylogenomics/ I highly recommend you look there for a good understanding of all the things Anvi'o can do, as well as bash tips and tricks. The folks at the Meren lab know exactly what they're doing. This is kind of a stripped-down, streamlined version of what that page describes, with examples of how to go about adding to the database and understanding what it is and does.
+
+---
+
+Please note that I have made several scripts to make this process a lot easier. I'm going to show you precisely how to go about using them with a specific tutorial (TODO: ADD LINK TO EXAMPLE DOC).
+
+The scripts are hosted at https://github.com/jwestrob/Script_Toybox. If you are going to proceed with the tutorial, please clone this repository onto your computer as so:
+
+```{r, engine='bash', clone-toybox}
+git clone https://github.com/jwestrob/Script_Toybox.git
+```
+
+From here on out, I will refer to the directory where you placed this repository as "SCRIPTS". I recommend putting it someplace convenient, such as in your home directory, so you can access it with something like "~/scripts". Also, I always rename the directory to "scripts" so I don't have to type out Script_Toybox. Do what you like.
+
+Scripts we’ll be using:
+
+- SCRIPTS/run_anvio_dbandstats.py : Takes all .fa files in a directory and runs everything to generate good contigs databases for you. Just runs in the local directory. If you need to use it in subdirectories, do a symbolic link (ln -s ~/scripts/run_anvio_dbandstats.py). Make sure to go in and modify the number of threads (set to 4 by default) to the number available on your system.
+
+- SCRIPTS/get_concatenated_proteins.sh : Takes all the contigs databases you’ve generated and gets a concatenated alignment of Ribosomal LSU Proteins 1-6, both in nucleotide and amino acid format. FOR BACTERIA ONLY!!!! Modifying it to use Archaeal SCGs or Ribosomal RNAs is as easy as changing “--hmm-source” to “Rinke_et_al” or “Ribosomal_RNAs”, respectively.
+
+- SCRIPTS/get_extended_proteins.sh : Does the same as the above script, but instead of Large Subunit proteins 1-6, it uses all the ribosomal proteins in the Campbell et al. HMM suite (49 in total).
+
+
+
+
+# REMINDER
+
+You will always forget to do this. Make sure to execute the command
+
+```{r, engine='bash', source_activate_anvio}
+source activate anvio4
+```
+
+before you start doing anything with Anvi'o. This activates the virtual environment for Anvi'o, hosted from within Anaconda.
+
+Once a genome has been converted into a 'contigs database' via the command
+
+```{r, engine='bash', anvi-profile}
+```
